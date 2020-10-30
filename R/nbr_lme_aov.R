@@ -1,7 +1,11 @@
-#' Network-based for Linear mixed effects (LME) ANOVA
+#' @title Network-based R-statistics using Mixed Effects Models ANOVA
 #'
-#' @description This function computes the same linear mixed effects (LME) ANOVA at the network edge level,
-#'  and calculates its family wise error (FWE) cluster of connected edges by permutation.
+#' @description This function computes the specified (non)linear mixed models (LME) ANOVA for
+#'  each edge in the network, and calculates the family wise error (FWE) p-value for the size
+#'  of the clusters of connected edges that are individually below the P threshold
+#'  (\emph{thrP}), or above the F threshold (\emph{thrF}). FWE estimation is based on the null
+#'  distribution of the maximum size of sets of connected edges (defined as above), obtained
+#'  with \emph{nperm} permutations of the original data.
 #'
 #' @usage nbr_lme_aov(net, nnodes, idata, mod, rdm, diag = FALSE,
 #'             nperm, thrP = 0.05, thrF = NULL, cores = NULL,
@@ -9,16 +13,16 @@
 #'             verbose = TRUE, ...)
 #'
 #' @param net 3D volume (2D matrices for each observation) or 2D matrix of edges as columns.
-#' @param nnodes Integer number of network nodes.
-#' @param idata Matrix or data.frame with sample inference variables.
-#' @param mod Character string with independent variables formula.
-#' @param rdm Character string specifying the random effects structure.
-#' @param diag Logical indicating if matrix diagonal is include in the analysis (default: FALSE).
+#' @param nnodes Number of network nodes.
+#' @param idata Matrix or data.frame including independent variables of interest of the model.
+#' @param mod Fixed effects, specify as a string, e.g., "~Session + Sex".
+#' @param rdm Random effects, specify as a string, e.g., "~1+Session|id".
+#' @param diag Logical indicating if matrix diagonal is to be included in the analysis (default: FALSE).
 #' @param nperm Number of permutations.
 #' @param thrP Individual edge p-value threshold (if NULL, thrF should be given).
 #' @param thrF Individual edge F-value threshold (if NULL, thrP should be given).
 #' @param cores Number of selected cores for parallel computing (default: NULL).
-#' @param nudist Logical indicating if null distribution stats should be returned (default: FALSE).
+#' @param nudist Logical indicating if null distribution should be returned (default: FALSE).
 #' @param expList Character string adding variable names to the varlist of 'clusterExport' (default: NULL).
 #' @param verbose Logical indicating if messages should be printed (default: TRUE).
 #' @param ... Additional arguments to be passed to the low level 'lm' function.

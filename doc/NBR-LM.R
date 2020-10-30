@@ -7,8 +7,8 @@ knitr::opts_chunk$set(
 ## ----setup--------------------------------------------------------------------
 library(NBR)
 cmx <- NBR:::frontal3D          # Load 3D array
-brain_labs <- NBR:::frontal_roi # Load network nodes labels
-phen <- NBR:::frontal_phen      # Load sample phenotypic info
+brain_labs <- NBR:::frontal_roi # Load node labels
+phen <- NBR:::frontal_phen      # Load phenotypic info
 dim(cmx)                        # Show 3D array dimensions
 
 ## ----input networks, fig.align = "center"-------------------------------------
@@ -42,7 +42,7 @@ show(after-before)
 #  length(nbr_group)
 
 ## ----component display, fig.align = "center"----------------------------------
-# Plot significant edges
+# Plot significant component
 edge_mat <- array(0, dim(avg_mx))
 edge_mat[nbr_group$components$Group[,2:3]] <- 1
 levelplot(edge_mat, col.regions = rev(heat.colors(100)),

@@ -1,7 +1,7 @@
 ---
-title: "Network-based for linear models in R"
+title: "Network-Based R-statistics for linear models"
 #author: "Zeus Gracia-Tabuenca"
-#date: "March 2020"
+#date: "June 2020"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{NBR-LM}
@@ -16,19 +16,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette documents the implementation of NBR 0.1.2 for linear models applied to a sample level of matrices edges.
+This vignette documents the implementation of NBR 0.1.3 for linear models.
 
-Here it is an example applied into a 3D volume. Where, its first two dimension must be equal, i.e., the number of nodes of every individual network matrix (`nnodes`). And its third dimension equals the sample number.
+We will analyze the `frontal3D` dataset, which contains a 3D volume of 48 matrices, each matrix representing the functional connectivity between 28 nodes (in the frontal lobe). Phenotypic information (`frontal_phen`) includes diagnostic GROUP (patient or control), sex, and age. We will test for a GROUP effect.
 
 ```{r setup}
 library(NBR)
 cmx <- NBR:::frontal3D          # Load 3D array
-brain_labs <- NBR:::frontal_roi # Load network nodes labels
-phen <- NBR:::frontal_phen      # Load sample phenotypic info
+brain_labs <- NBR:::frontal_roi # Load node labels
+phen <- NBR:::frontal_phen      # Load phenotypic info
 dim(cmx)                        # Show 3D array dimensions
 ```
 
-We can plot the sample average network matrix, with `lattice::levelplot`.
+We can plot the sample average matrix, with `lattice::levelplot`.
 
 ```{r input networks, fig.align = "center"}
 library(lattice)
@@ -39,7 +39,7 @@ levelplot(avg_mx, main = "Average", ylab = "ROI", xlab = "ROI",
           at = seq(-flim, flim, length.out = 100))
 ```
 
-As we can observe, this is a symmetric matrix with the pairwise connections of the 28 regions of interest (ROI) `brain_labs`. The next step is to check the sample inference data to be tested edgewise, in this case `phen`. Before applied the NBR-LM it is necessary to be sure that the number of networks (i.e., the third dimension of the 3D array) matches the number of observations of the data.frame one wants to test.
+As we can observe, this is a symmetric matrix with the pairwise connections of the 28 regions of interest (ROI) `brain_labs`. The next step is to check the phenotypic information (stored in `phen`) to perform statistic inferences edgewise. Before applying the NBR-LM, we check that the number of matrices (3rd dimension in the dataset) matches the number of observations in the `phen` data.frame.
 
 ```{r input phenotypic info}
 head(phen)
@@ -47,7 +47,7 @@ nrow(phen)
 identical(nrow(phen), dim(cmx)[3])
 ```
 
-The data.frame contains the individual information for diagnostic group, sex, and chronological age. So, there are all the ingredients to perform a NBR-LM. We are going to test first a group inference (with just ten permutations in one core).
+The data.frame contains the individual information for diagnostic group, sex, and chronological age. So, we are all set to perform an NBR-LM. We are going to test the effect of diagnostic group with a minimal number of permutations to check that we have no errors.
 
 ```{r group-based NBR}
 set.seed(18900217) # Because R. Fisher is my hero
@@ -58,7 +58,7 @@ after <- Sys.time()
 show(after-before)
 ```
 
-Although ten permutations is faraway for a proper null distribution, we can see that it takes several seconds to performed it. So we suggest to parallel to multiple CPU cores with `cores` argument.
+Although ten permutations is quite low to obtain a proper null distribution, we can see that they take several seconds to be performed. So we suggest to parallelizing to multiple CPU cores with `cores` argument.
 
 ```{r multicore group-based NBR, eval = FALSE}
 set.seed(18900217)
@@ -70,10 +70,10 @@ after <- Sys.time()
 length(nbr_group)
 ```
 
-NBR functions return a nested list of at least two list. The first list encompasses all the individual significant edges and its corresponding component and statistical strength above threshold (p < 0.01, in this example). In this case all the significant edges belong to a single component.
+NBR functions return a nested list of at least two lists. The first list encompasses all the individual significant edges, their corresponding component and statistical inference (p < 0.01, in this example). In this case all the significant edges belong to a single component.
 
 ```{r component display, fig.align = "center"}
-# Plot significant edges
+# Plot significant component
 edge_mat <- array(0, dim(avg_mx))
 edge_mat[nbr_group$components$Group[,2:3]] <- 1
 levelplot(edge_mat, col.regions = rev(heat.colors(100)),
@@ -81,4 +81,4 @@ levelplot(edge_mat, col.regions = rev(heat.colors(100)),
 show(nbr_group$fwe$Group)
 ```
 
-As we can observe, significant edges are display in the upper triangle of the matrix, and the second list `fwe` contains, for each term of the equation, the probability of the observed values within the generated null distribution.
+As we can observe, significant edges are displayed in the upper triangle of the matrix, and the second list (`fwe`) contains, for each term of the equation, the probability of the observed values to occur by chance, based on the null distribution.

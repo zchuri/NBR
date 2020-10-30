@@ -1,7 +1,7 @@
 ---
-title: "NBR-LME"
+title: "Network-Based R-statistics for mixed-effects models"
 #author: "Zeus Gracia-Tabuenca"
-#date: "March 2020"
+#date: "July 2020"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{NBR-LME}
@@ -16,7 +16,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette documents the implementation of NBR 0.1.2 for linear mixed effect (LME) models applied to a sample level of matrices edges.
+This vignette documents the implementation of NBR 0.1.3 for linear mixed effect (LME) models.
+
+We will analyze the `voles` dataset, which contains a matrix of 96 rows (sessions) and 123 columns (variables). The first three variables include phenotypic information of the subjects/sessions (1: subject ID; 2: Sex; 3: Session 1-3), the remaining 120 variables include the upper triangle edges of a network of 16 brain regions (fMRI functional connectivity).
+
+NOTE: for more detail of the dataset execute `help(voles)`.
 
 ```{r setup}
 library(NBR)
@@ -26,17 +30,17 @@ dim(voles)
 head(voles)[1:8]
 ```
 
-In this example, there is the information for 48 observations and the first three columns are related to phenotypic information of the subjects, meanwhile the next 120 columns are bivariate physiological data related to a network of 16 brain regions (fMRI functional connectivity). NOTE: for more detail of the dataset execute `help(voles)`.
+Here we can obtain the correponding pairwise interaction of the brain network for each edge.
 
 ```{r upper triangle}
-nnodes <- 16
+nnodes <- length(brain_labs)
 tri_pos <- which(upper.tri(matrix(nrow = nnodes, ncol = nnodes)), arr.ind = T)
 head(tri_pos)
 ```
 
-IT'S VERY IMPORTANT that the order of the columns containing the network data must match with the order of the upper triangle of the network size.
+IT'S VERY IMPORTANT that the order of the columns containing the network data matches with the order of the upper triangle of the network matrix.
 
-Let's plot the average network.
+Let's plot the average network with `lattice::levelplot`.
 
 ```{r input network, fig.align = "center"}
 library(lattice)
@@ -49,57 +53,57 @@ levelplot(avg_mx, main = "Average", ylab = "ROI", xlab = "ROI",
           at = seq(-flim, flim, length.out = 100))
 ```
 
-The next step is to check the sample inference data to be tested edgewise. In this case we are going to test if the variables `Sex`, `Session`, and their interaction (`Sex:Session`) have an effect related to the edgewise functional connectivity between regions. Since every subject was assessed in three different sessions, we should add the intercept and the `Session` term as random effects adding the random formula `~ 1+Session|id`, where `id` accounts for the subject label.
+The next step is to check the dataset to be tested edgewise. In this case we are going to test if the variables `Sex`, `Session`, and their interaction (`Sex:Session`) have any effect related to the brain networks. Since every subject was assessed in three different sessions, we should add the intercept and the `Session` term as random effects adding the random formula `~ 1+Session|id`, where `id` accounts for the subject label.
 
-We recommend set the argument `control` to `optim` (`?stats::optim`), which is not the default, but it gives less problems of convergence in the permutations.
 
 ```{r NBR-LME, eval = FALSE}
 set.seed(18900217)
 before <- Sys.time()
 library(nlme)
-nbr_result <- nbr_lme_aov(net = volesNA[,-(1:3)],
-  nnodes = 16, idata = volesNA[,1:3], nperm = 5,
-  mod = "~ Session*Sex", rdm = "~ 1+Session|id",
-  na.action = na.exclude,
-  control = lmeControl(maxIter = 1000,
-                       msMaxIter = 1000,
-                       opt = "optim")
-  )
+nbr_result <- nbr_lme_aov(net = voles[,-(1:3)],
+  nnodes = 16,
+  idata = voles[,1:3],
+  nperm = 5,
+  mod = "~ Session*Sex",
+  rdm = "~ 1+Session|id",
+  na.action = na.exclude)
 after <- Sys.time()
 show(after-before)
 ```
 
-Although five permutations is faraway for a proper null distribution, we can see that it takes several seconds to performed it. So we suggest to parallel to multiple CPU cores with `cores` argument.
+Although five permutations is quite low to obtain a proper null distribution, we can see that they take several seconds to be performed. So we suggest parallelizing to multiple CPU cores with the `cores` argument.
+
 
 ```{r multicore NBR-LME, eval = FALSE}
 set.seed(18900217)
 before <- Sys.time()
 library(nlme)
 library(parallel)
-nbr_result <- nbr_lme_aov(net = voles[,-(1:3)],
-  nnodes = 16, idata = voles[,1:3],
-  nperm = 1000, nudist = T,
-  mod = "~ Session*Sex", rdm = "~ 1+Session|id",
-  cores = detectCores(), expList = "lmeControl",
-  na.action = na.exclude,
-  control = lmeControl(maxIter = 1000,
-                       msMaxIter = 1000,
-                       opt = "optim")
+nbr_result <- nbr_lme_aov(
+  net = voles[,-(1:3)],
+  nnodes = 16,
+  idata = voles[,1:3],
+  nperm = 1000,
+  nudist = T,
+  mod = "~ Session*Sex",
+  rdm = "~ 1+Session|id",
+  cores = detectCores(),
+  na.action = na.exclude
   )
 after <- Sys.time()
 show(after-before)
 ```
 
-This will elapse approximately 15 minutes in a Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz with 12 cores. So, better load it instead to repeated again.
+This may elapse approximately 15 minutes in an Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz with 12 cores. But we can load those results instead of running them again.
 
 ```{r NBR-LME results}
 nbr_result <- NBR:::voles_nbr
 show(nbr_result$fwe)
 ```
 
-If we observed the Family-Wise Error (FWE) probabilities of the observed components, only the component 1 in the `Session` term is lower than the nominal alpha of p < 0.05. There are the probabilities of the number of connected components and the strength sum of components, which one to choose will depend on the _a priori_ hypothesis, but we usually consider the strength sum because it considers not only the component edges but also their weights.
+If we observed the Family-Wise Error (FWE) probabilities of the observed components, only the component 1 in the `Session` term is lower than the nominal alpha of p < 0.05. The table shows the probabilites associated with: 1) the number of connected eges, and 2) the sum of the strength of the edges. In this case, we will use the sum of strengths, but you can choose depending on your research question.
 
-Let's display the FWE-corrected component
+Let's display the FWE-corrected component.
 
 ```{r component display, fig.align = "center"}
 # Plot significant edges
@@ -109,12 +113,12 @@ levelplot(edge_mat, col.regions = rev(heat.colors(100)),
           main = "Component", ylab = "ROI", xlab = "ROI")
 ```
 
-Lastly, if we are not sure if 1000 permutations is enough we can plot the cumulative p-value with its corresponding binomial marginal error. To do so it was needed to set TRUE the return null distribution argument (`nudist`).
+Lastly, if we are not sure if 1000 permutations are enough we can plot the cumulative p-value (black line) with its corresponding binomial marginal error (green lines). To do so, you just need to set TRUE for the return null distribution argument (`nudist`).
 
 ```{r component cum-pval, fig.height = 3, fig.width = 5, fig.align = "center"}
-nperm <- 1000
 null_ses_str <- nbr_result$nudist[,2]  # Null distribution for Session strength
 obs_ses_str <- nbr_result$fwe$Session[,4] # Observed Session strength
+nperm <- length(null_ses_str)
 cumpval <- cumsum(null_ses_str >= obs_ses_str)/(1:nperm)
 # Plot p-value stability
 plot(cumpval, type="l", ylim = c(0,0.06), las = 1,

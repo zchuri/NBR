@@ -12,7 +12,7 @@ dim(voles)
 head(voles)[1:8]
 
 ## ----upper triangle-----------------------------------------------------------
-nnodes <- 16
+nnodes <- length(brain_labs)
 tri_pos <- which(upper.tri(matrix(nrow = nnodes, ncol = nnodes)), arr.ind = T)
 head(tri_pos)
 
@@ -30,14 +30,13 @@ levelplot(avg_mx, main = "Average", ylab = "ROI", xlab = "ROI",
 #  set.seed(18900217)
 #  before <- Sys.time()
 #  library(nlme)
-#  nbr_result <- nbr_lme_aov(net = volesNA[,-(1:3)],
-#    nnodes = 16, idata = volesNA[,1:3], nperm = 5,
-#    mod = "~ Session*Sex", rdm = "~ 1+Session|id",
-#    na.action = na.exclude,
-#    control = lmeControl(maxIter = 1000,
-#                         msMaxIter = 1000,
-#                         opt = "optim")
-#    )
+#  nbr_result <- nbr_lme_aov(net = voles[,-(1:3)],
+#    nnodes = 16,
+#    idata = voles[,1:3],
+#    nperm = 5,
+#    mod = "~ Session*Sex",
+#    rdm = "~ 1+Session|id",
+#    na.action = na.exclude)
 #  after <- Sys.time()
 #  show(after-before)
 
@@ -46,15 +45,16 @@ levelplot(avg_mx, main = "Average", ylab = "ROI", xlab = "ROI",
 #  before <- Sys.time()
 #  library(nlme)
 #  library(parallel)
-#  nbr_result <- nbr_lme_aov(net = voles[,-(1:3)],
-#    nnodes = 16, idata = voles[,1:3],
-#    nperm = 1000, nudist = T,
-#    mod = "~ Session*Sex", rdm = "~ 1+Session|id",
-#    cores = detectCores(), expList = "lmeControl",
-#    na.action = na.exclude,
-#    control = lmeControl(maxIter = 1000,
-#                         msMaxIter = 1000,
-#                         opt = "optim")
+#  nbr_result <- nbr_lme_aov(
+#    net = voles[,-(1:3)],
+#    nnodes = 16,
+#    idata = voles[,1:3],
+#    nperm = 1000,
+#    nudist = T,
+#    mod = "~ Session*Sex",
+#    rdm = "~ 1+Session|id",
+#    cores = detectCores(),
+#    na.action = na.exclude
 #    )
 #  after <- Sys.time()
 #  show(after-before)
@@ -71,9 +71,9 @@ levelplot(edge_mat, col.regions = rev(heat.colors(100)),
           main = "Component", ylab = "ROI", xlab = "ROI")
 
 ## ----component cum-pval, fig.height = 3, fig.width = 5, fig.align = "center"----
-nperm <- 1000
 null_ses_str <- nbr_result$nudist[,2]  # Null distribution for Session strength
 obs_ses_str <- nbr_result$fwe$Session[,4] # Observed Session strength
+nperm <- length(null_ses_str)
 cumpval <- cumsum(null_ses_str >= obs_ses_str)/(1:nperm)
 # Plot p-value stability
 plot(cumpval, type="l", ylim = c(0,0.06), las = 1,

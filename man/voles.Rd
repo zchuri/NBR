@@ -4,11 +4,11 @@
 \name{voles}
 \alias{voles}
 \title{Prairie voles functional connectivity}
-\format{A data frame with 96 rows and 123 variables:
+\format{A data.frame with 96 rows and 123 variables:
 \describe{
   \item{id}{Subject ID, factor.}
-  \item{Sex}{Sex factor, female (F) of male (M).}
-  \item{Session}{Session factor, 1st, 2nd, or 3rd.}
+  \item{Sex}{Factor: female (F) or male (M).}
+  \item{Session}{Factor: 1st, 2nd, or 3rd.}
   \item{ACC.AON}{Functional connectivity between ACC and AON regions, numeric}
   \item{ACC.BLA}{Functional connectivity between ACC and BLA regions, numeric}
   \item{AON.BLA}{Functional connectivity between AON and BLA regions, numeric}
@@ -131,7 +131,7 @@
   \item{HipD.HipV}{Functional connectivity between HipD and HipV regions, numeric}
 }}
 \source{
-\url{https://www.biorxiv.org/content/10.1101/752345v1}
+\url{https://www.biorxiv.org/content/10.1101/752345v2}
 }
 \usage{
 voles
@@ -142,7 +142,7 @@ A dataset containing the functional connectivity between
 }
 \details{
 Data is based on an experiment of social bonding in prairie voles.
-Functional connectivity was measure as the Pearson correlation
+Functional connectivity was measured as the Pearson correlation
 between the average fMRI signal from the regions of interest (ROI)
 within 16 anatomical areas of brain. Then, a total of
 120 pairwise connections are contained in the dataset.

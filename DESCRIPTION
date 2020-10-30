@@ -1,15 +1,15 @@
 Package: NBR
 Type: Package
-Title: Network Based Statistics in R for Mixed Effects Models
-Version: 0.1.2
+Title: Network-Based R-Statistics using Mixed Effects Models
+Version: 0.1.3
 Authors@R: c(
     person("Zeus", "Gracia-Tabuenca", email = "zgtabuenca@comunidad.unam.mx", role =  c("aut", "cre")),
     person("Sarael", "Alcauter", email = "alcauter@inb.unam.mx", role = "aut"))
 Author: Zeus Gracia-Tabuenca [aut, cre],
   Sarael Alcauter [aut]
 Maintainer: Zeus Gracia-Tabuenca <zgtabuenca@comunidad.unam.mx>
-Description: An implementation of network-based statistics in R for mixed effects models.
-    Theoretical background for Network Based Statistics can be found in Zalesky et al. (2010)
+Description: An implementation of network-based statistics in R using mixed effects models.
+    Theoretical background for Network-Based Statistics can be found in Zalesky et al. (2010)
     <doi:10.1016/j.neuroimage.2010.06.041>. For Mixed Effects Models check the
     R package <https://CRAN.R-project.org/package=nlme>.
 Depends: R (>= 2.10)

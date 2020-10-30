@@ -1,7 +1,11 @@
-#' @title Network-based for Linear Model
+#' @title Network-based R-statistics using Linear Model
 #'
-#' @description This function computes the same linear model at the network edge level, and calculates its
-#'  family wise error (FWE) cluster of connected edges by permutation.
+#' @description This function computes the specified linear model (LM) for each edge in the network,
+#'  and calculates the family wise error (FWE) p-value for the size of the clusters of connected
+#'  edges that are individually below the P threshold (\emph{thrP}), or above the T threshold
+#'  (\emph{thrT}). FWE estimation is based on the null distribution of the maximum size of sets
+#'  of connected edges (defined as above), obtained with \emph{nperm} permutations of the
+#'  original data.
 #'
 #' @usage nbr_lm(net, nnodes, idata, mod, diag = FALSE, nperm,
 #'        thrP = 0.05, thrT = NULL, cores = NULL,
@@ -9,34 +13,38 @@
 #'        ...)
 #'
 #' @param net 3D volume (2D matrices for each observation) or 2D matrix of edges as columns.
-#' @param nnodes Integer number of network nodes.
-#' @param idata Matrix or data.frame with sample inference variables.
-#' @param mod Character string with independent variables formula.
-#' @param diag Logical indicating if matrix diagonal is include in the analysis (default: FALSE).
+#' @param nnodes Number of network nodes.
+#' @param idata Matrix or data.frame including independent variables of interest of the model.
+#' @param mod Model, specify as a string, e.g., "~Group + Age".
+#' @param diag Logical indicating if matrix diagonal is to be included in the analysis (default: FALSE).
 #' @param nperm Number of permutations.
 #' @param thrP Individual edge p-value threshold (if NULL, thrT should be given).
 #' @param thrT Individual edge T-value threshold (if NULL, thrP should be given).
 #' @param cores Number of selected cores for parallel computing (default: NULL).
-#' @param nudist Logical indicating if null distribution stats should be returned (default: FALSE).
+#' @param nudist Logical indicating if null distribution should be returned (default: FALSE).
 #' @param expList Character string adding variable names to the varlist of 'clusterExport' (default: NULL).
 #' @param verbose Logical indicating if messages should be printed (default: TRUE).
 #' @param ... Additional arguments to be passed to the low level 'lm' function.
 #'
-#' @details It's VERY IMPORTANT when giving \emph{net} as a 2D matrix or data.frame, be completely sure that
-#' column distribution fits with that of the upper triangle indices of a \emph{nnodes} * \emph{nnodes} matrix.
-#' This function assumes that.
+#' @details It's VERY IMPORTANT when giving \emph{net} as a 2D matrix or data.frame, to be
+#'  completely sure that column distribution fits that of the upper triangle indices of an
+#'  \emph{nnodes} * \emph{nnodes} matrix. This may be verified through the edge indices, e.g.,
+#'  "which(upper.tri(matrix(nrow = nnodes, ncol = nnodes)), arr.ind = T)" (see vignette NBR-LME
+#'  for more details).
 #'
-#' Regarding the set of \emph{nperm}, I suggest first setting it to small values (5 or 10) in order to test that
-#' everything runs fine. After that, \emph{nperm} equal or higher than 1000 will be necessary in order to
-#' lower the margin of error of the Family-Wise Error p-value.
+#' Regarding \emph{nperm}, I suggest first setting it to small values (5 or 10) in order to test that
+#' everything runs fine. After that, set \emph{nperm} to 1000 or larger number to decrease the
+#' margin of error of the FWE p-value (see \url{https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Randomise/Theory#Conditional_Monte_Carlo_Permutation_Tests}
+#' to explore the behavior of FWE p-value as a function of \emph{nperm}).
 #'
 #' @return List containing the observed statistics and their corresponding FWE p-values,
-#'  if requested by \emph{nudist} it will return the null distribution of permuted values.
+#'  if requested by \emph{nudist} it will return the null distribution.
 #'  \enumerate{
-#'   \item Observed statistics for every individual edge: corresponding component and strength for each model term.
-#'   \item FWE for components: number size and strength sum, with their corresponding FWE p-value.
-#'   \item Null Distribution: higher component size and strength for each permutation. Only returned if
-#'    \emph{nudist} is TRUE.
+#'   \item Observed statistics for every individual edge: corresponding subset of connected
+#'    nodes and strength for each model term.
+#'   \item FWE for components: binary and strength sum, with their corresponding FWE p-value.
+#'   \item Null Distribution: maximal component size and strength for each permutation. Only
+#'    returned if \emph{nudist} is TRUE.
 #' }
 #'
 #' @examples

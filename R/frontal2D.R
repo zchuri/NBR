@@ -6,16 +6,16 @@
 #'
 #' Data was taken from the ADHD200 dataset and variables were
 #' manipulated in order to be different of the original data.
-#' Functional connectivity was measure as the Pearson correlation
-#' between the average fMRI signal from the regions of interest (ROI)
-#' within 28 anatomical areas of the frontal lobe. Then, a total of
+#' Functional connectivity was measured as the Pearson correlation
+#' between the average fMRI signal from the regions of interest (ROI),
+#' i.e., 28 anatomical areas of the frontal lobe. Thus, a total of
 #' 378 pairwise connections are contained in the dataset.
 #'
 #' @format A data frame with 48 rows and 381 variables:
 #' \describe{
-#'   \item{Group}{Diagnostic group, control or patient.}
-#'   \item{Sex}{Sex factor, female (F) of male (M).}
-#'   \item{Age}{Chronological age in years old after birth, numeric.}
+#'   \item{Group}{Diagnostic group factor, control or patient.}
+#'   \item{Sex}{Factor, female (F) or male (M).}
+#'   \item{Age}{Chronological age in years, numeric.}
 #'   \item{FAG.FAD}{Functional connectivity between FAG and FAD regions, numeric}
 #'   \item{FAG.F1G}{Functional connectivity between FAG and F1G regions, numeric}
 #'   \item{FAD.F1G}{Functional connectivity between FAD and F1G regions, numeric}
