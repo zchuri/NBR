@@ -89,7 +89,7 @@ nbr_lm_aov <- function(net,
   lm_form <- as.formula(paste0("mx[,",1,"]",mod))
   fit_ex <- anova(lm(lm_form, idata, ...))
   # Create empty object to store F-statistic and p-values edgewise
-  obsF <- matrix(0, nrow = nrow(tri_pos), ncol = (nrow(fit_ex)-1)*2)
+  obsF <- matrix(as.numeric(NA), nrow = nrow(tri_pos), ncol = (nrow(fit_ex)-1)*2)
 
   # Compute observed stats
   if(verbose) cat("Computing observed stats")
@@ -213,7 +213,7 @@ nbr_lm_aov <- function(net,
     if(verbose) if(pp%%100 == 0) cat(pp)
 
     # Create empty object to store F-statistic and p-values edgewise
-    permF <- matrix(0, nrow = nrow(tri_pos), ncol = (nrow(fit_ex)-1)*2)
+    permF <- matrix(as.numeric(NA), nrow = nrow(tri_pos), ncol = (nrow(fit_ex)-1)*2)
     # Permutate inference dataset
     pdata <- idata[sample(1:nrow(idata)),]
 

@@ -107,7 +107,7 @@ nbr_lme_aov <- function(net,
   # Create empty object to store F-statistic and p-values edgewise
   nedges <- nrow(tri_pos)
   nvars <- nrow(fit_ex)-1
-  obsF <- matrix(0, nrow = nedges, ncol = nvars*2)
+  obsF <- matrix(as.numeric(NA), nrow = nedges, ncol = nvars*2)
 
   # Compute observed stats
   if(verbose) cat("Computing observed stats")
@@ -250,7 +250,7 @@ nbr_lme_aov <- function(net,
     if(verbose) if(pp%%100 == 0) cat(pp)
 
     # Create empty object to store F-statistic and p-values edgewise
-    permF <- matrix(0, nrow = nedges, ncol = nvars*2)
+    permF <- matrix(as.numeric(NA), nrow = nedges, ncol = nvars*2)
     # Permutate inference dataset (within block)
     perm_idx <- as.vector(sapply(as.data.frame(1:idata_dim[1]),
                                  function(x) ave(x, idata[,id_idx], FUN = sample)))

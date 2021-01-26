@@ -105,7 +105,7 @@ nbr_lm <- function(net,
   lm_form <- as.formula(paste0("mx[,",1,"]",mod))
   fit_ex <- coefficients(summary(lm(lm_form, idata, ...)))
   # Create empty object to store F-statistic and p-values edgewise
-  obsT <- matrix(0, nrow = nrow(tri_pos), ncol = (nrow(fit_ex)-1)*2)
+  obsT <- matrix(as.numeric(NA), nrow = nrow(tri_pos), ncol = (nrow(fit_ex)-1)*2)
 
   # Compute observed stats
   if(verbose) cat("Computing observed stats")
@@ -143,7 +143,7 @@ nbr_lm <- function(net,
   colnames(obsT) <- paste0(rep(rownames(fit_ex)[2:nrow(fit_ex)], each = 2),c("_t","_p"))
   if(verbose) cat(".\n")
 
-  # Find components based on F-statistic or p-values thresholds
+  # Find components based on T-statistic or p-values thresholds
   if(all(is.null(thrT),is.null(thrP))) stop("STOP: t- or p-value threshold needed!")
   if(is.null(thrP)){thr <- thrT; thr_idx <- 1}
   if(is.null(thrT)){thr <- thrP; thr_idx <- 2}
@@ -226,7 +226,7 @@ nbr_lm <- function(net,
     if(verbose) if(pp%%100 == 0) cat(pp)
 
     # Create empty object to store F-statistic and p-values edgewise
-    permT <- matrix(0, nrow = nrow(tri_pos), ncol = (nrow(fit_ex)-1)*2)
+    permT <- matrix(as.numeric(NA), nrow = nrow(tri_pos), ncol = (nrow(fit_ex)-1)*2)
     # Permutate inference dataset
     pdata <- idata[sample(1:nrow(idata)),]
 

@@ -1,7 +1,7 @@
 Package: NBR
 Type: Package
 Title: Network-Based R-Statistics using Mixed Effects Models
-Version: 0.1.3
+Version: 0.1.4
 Authors@R: c(
     person("Zeus", "Gracia-Tabuenca", email = "zgtabuenca@comunidad.unam.mx", role =  c("aut", "cre")),
     person("Sarael", "Alcauter", email = "alcauter@inb.unam.mx", role = "aut"))
@@ -25,6 +25,7 @@ Suggests:
     graphics,
     knitr,
     lattice,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 2.1.0)
 VignetteBuilder: knitr
 Language: en-US
