@@ -131,13 +131,16 @@ edge_lm <- function(net,
   if(verbose) cat(".\n")
 
   # Applied multiple comparison correction with p.adjust
-  # Permutate dataset
   if(verbose) cat("Computing p.adjust.method")
   obsT[,seq(3,obsT_ncol,3)] <- sapply(seq(2,obsT_ncol,3),function(x) p.adjust(p = obsT[,x], method = padj))
   # Set output list
   colnames(obsT) <- paste0(rep(rownames(fit_ex)[2:nrow(fit_ex)], each = 3),
                            c("_t","_p",paste0("_p",padj)))
   if(verbose) cat(".\n")
+  
+  # Add edge labels
+  obsT <- cbind(tri_pos,obsT)
+  colnames(obsT)[1:2] <- c("2Drow","2Dcol")
   
   # Return results
   return(as.data.frame(obsT))
