@@ -4,9 +4,10 @@
 \alias{nbr_lm}
 \title{Network-based R-statistics using Linear Model}
 \usage{
-nbr_lm(net, nnodes, idata, mod, diag = FALSE, nperm,
-       thrP = 0.05, thrT = NULL, cores = NULL,
-       nudist = FALSE, expList = NULL, verbose = TRUE,
+nbr_lm(net, nnodes, idata, mod, 
+       alternative = c("two.sided", "less", "greater"),
+       diag = FALSE, nperm, thrP = 0.05, thrT = NULL,
+       cores = NULL, nudist = FALSE, expList = NULL, verbose = TRUE,
        ...)
 }
 \arguments{
@@ -17,6 +18,8 @@ nbr_lm(net, nnodes, idata, mod, diag = FALSE, nperm,
 \item{idata}{Matrix or data.frame including independent variables of interest of the model.}
 
 \item{mod}{Model, specify as a string, e.g., "~Group + Age".}
+
+\item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided" (default), "greater" or "less". You can specify just the initial letter.}
 
 \item{diag}{Logical indicating if matrix diagonal is to be included in the analysis (default: FALSE).}
 
