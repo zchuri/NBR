@@ -8,7 +8,7 @@
 #'  original data.
 #'
 #' @usage nbr_lm(net, nnodes, idata, mod, 
-#'        alternative = c("two.sided", "less", "greater"),
+#'        alternative = c("two.sided", "lower", "greater"),
 #'        diag = FALSE, nperm, thrP = 0.05, thrT = NULL,
 #'        cores = NULL, nudist = FALSE, expList = NULL, verbose = TRUE,
 #'        ...)
@@ -17,7 +17,7 @@
 #' @param nnodes Number of network nodes.
 #' @param idata Matrix or data.frame including independent variables of interest of the model.
 #' @param mod Model, specify as a string, e.g., "~Group + Age".
-#' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided" (default), "greater" or "less". You can specify just the initial letter.
+#' @param alternative a character string specifying the alternative hypothesis, must be one of "two.sided" (default), "greater" or "lower". You can specify just the initial letter.
 #' @param diag Logical indicating if matrix diagonal is to be included in the analysis (default: FALSE).
 #' @param nperm Number of permutations.
 #' @param thrP Individual edge p-value threshold (if NULL, thrT should be given).
@@ -66,7 +66,7 @@ nbr_lm <- function(net,
                    nnodes,
                    idata,
                    mod,
-                   alternative = c("two.sided","less", "greater"),
+                   alternative = c("two.sided","lower", "greater"),
                    diag = FALSE,
                    nperm,
                    thrP = 0.05,
@@ -102,7 +102,7 @@ nbr_lm <- function(net,
   if(nrow(idata)!=nrow(mx)) stop("STOP: network volume dimension 3 and dataset must match!!")
   if(nperm%%1 != 0) stop("STOP: number of permutations must be integer!!")
   if(!is.numeric(as.matrix(mx))) stop("STOP: network array is not numeric!!")
-  alt <- match.arg(alternative, c("two.sided","less", "greater"))
+  alt <- match.arg(alternative, c("two.sided","lower", "greater"))
 
   # Apply example model edgewise
   lm_form <- as.formula(paste0("mx[,",1,"]",mod))
@@ -164,7 +164,7 @@ nbr_lm <- function(net,
       if(alt=="two.sided"){
         edges <- which(abs(obsT[,ii*2-thr_idx])>thr)
       } else{
-        if(alt=="less"){
+        if(alt=="lower"){
           edges <- which(obsT[,ii*2-thr_idx]<thr)
         } else edges <- which(obsT[,ii*2-thr_idx]>thr)
       }
@@ -173,7 +173,7 @@ nbr_lm <- function(net,
         component <- vector("integer", length(edges))
         # Store strength intensity
         strength <- abs(obsT[edges,ii*2-thr_idx])-abs(thr)
-        # Mantain polarity
+        # Maintain polarity
         strength <- strength*(1-(obsT[edges,ii*2-thr_idx]<0)*2)
         # Label nodes and edge component
         for(jj in 1:length(edges)) component[jj] <- obs_comp[tri_pos[edges[jj],],ii] <- min(obs_comp[tri_pos[edges[jj],],ii])
@@ -189,20 +189,20 @@ nbr_lm <- function(net,
       if(alt=="two.sided"){
         edges <- which(obsT[,ii*thr_idx]<thr)
       } else{
-        if(alt=="less"){
+        if(alt=="lower"){
           edges <- which(obsT[,ii*thr_idx]<thr*2 & obsT[,ii*thr_idx-1]<0)
         } else edges <- which(obsT[,ii*thr_idx]<thr*2 & obsT[,ii*thr_idx-1]>0)
       }
       if(length(edges)>0){
         # Generate empty object for component label
         component <- vector("integer", length(edges))
-        # Store strength intensity (bi-sided)
+        # Store strength intensity
         if(alt=="two.sided"){
           strength <- abs(obsT[edges,ii*thr_idx-1])-qt(1-thrP/2,nrow(idata)-nrow(fit_ex))
         } else{
           strength <- abs(obsT[edges,ii*thr_idx-1])-qt(1-thrP,nrow(idata)-nrow(fit_ex))
         }
-        # Mantain polarity
+        # Maintain polarity
         strength <- strength*(1-(obsT[edges,ii*thr_idx-1]<0)*2)
         # Label nodes and edge component
         for(jj in 1:length(edges)){
@@ -246,10 +246,10 @@ nbr_lm <- function(net,
 
     # Create empty object to store F-statistic and p-values edgewise
     permT <- matrix(0, nrow = nrow(tri_pos), ncol = (nrow(fit_ex)-1)*2)
-    # Permutate inference dataset
+    # Permute inference dataset
     pdata <- idata[sample(1:nrow(idata)),]
 
-    # Set (or not) parallelization
+    # Set (or not) parallel
     if(is.null(cores)){
       # Apply example model edgewise
       permT <- t(sapply(1:nrow(tri_pos), function(x){
@@ -279,7 +279,7 @@ nbr_lm <- function(net,
         if(alt=="two.sided"){
           edges <- which(abs(permT[,ii*2-thr_idx])>thr)
         } else{
-          if(alt=="less"){
+          if(alt=="lower"){
             edges <- which(permT[,ii*2-thr_idx]<thr)
           } else edges <- which(permT[,ii*2-thr_idx]>thr)
         }
@@ -287,7 +287,7 @@ nbr_lm <- function(net,
           # Generate empty object for component label
           component <- vector("integer", length(edges))
           # Store strength
-          strength <- abs(permT[edges,ii*2-thr_idx])-abs(thrT)
+          strength <- abs(permT[edges,ii*2-thr_idx])-abs(thr)
           # Label nodes and edge component
           for(jj in 1:length(edges)) component[jj] <- perm_comp[tri_pos[edges[jj],],ii] <- min(perm_comp[tri_pos[edges[jj],],ii])
           # Store results
@@ -301,7 +301,7 @@ nbr_lm <- function(net,
         if(alt=="two.sided"){
           edges <- which(permT[,ii*thr_idx]<thr)
         } else{
-          if(alt=="less"){
+          if(alt=="lower"){
             edges <- which(permT[,ii*thr_idx]<thr*2 & permT[,ii*thr_idx-1]<0)
           } else edges <- which(permT[,ii*thr_idx]<thr*2 & permT[,ii*thr_idx-1]>0)
         }
@@ -344,7 +344,7 @@ nbr_lm <- function(net,
     if(!is.null(obs_list[[ii]])){
       # Number of components FWE
       obs_ncomp <- ncompFWE <- table(obs_list[[ii]][,4])
-      for(cc in 1:length(obs_ncomp)) ncompFWE[cc] <- sum(null_dist[,(2*ii)-1] > obs_ncomp[cc])/nperm
+      for(cc in 1:length(obs_ncomp)) ncompFWE[cc] <- sum(null_dist[,(2*ii)-1] >= obs_ncomp[cc])/nperm
       # Components strength
       obs_strn <- strnFWE <- aggregate(obs_list[[ii]][,5]~obs_list[[ii]][,4], obs_list[[ii]], function(x) sum(abs(x)))
       for(cc in 1:nrow(obs_strn)) strnFWE[cc,2] <- sum(null_dist[,(2*ii)] > obs_strn[cc,2])/nperm

@@ -5,6 +5,7 @@
 \title{Network-based R-statistics using Mixed Effects Models}
 \usage{
 nbr_lme(net, nnodes, idata, mod, rdm, diag = FALSE,
+        alternative = c("two.sided", "lower", "greater"),
         nperm, thrP = 0.05, thrT = NULL, cores = NULL,
         nudist = FALSE, expList = NULL, verbose = TRUE,
         ...)
@@ -21,6 +22,8 @@ nbr_lme(net, nnodes, idata, mod, rdm, diag = FALSE,
 \item{rdm}{Random effects, specify as a string, e.g., "~1+Session|id".}
 
 \item{diag}{Logical indicating if matrix diagonal is to be included in the analysis (default: FALSE).}
+
+\item{alternative}{a character string specifying the alternative hypothesis, must be one of "two.sided" (default), "greater" or "lower". You can specify just the initial letter.}
 
 \item{nperm}{Number of permutations.}
 

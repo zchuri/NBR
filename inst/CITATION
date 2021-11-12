@@ -1,0 +1,16 @@
+citHeader("To cite NBR in publications use:")
+
+citEntry(entry = "Article",
+  title        = "NBR: network-based R-statistics for (unbalanced) longitudinal samples.",
+  author       = personList(as.person("Zeus Gracia-Tabuenca"),
+                   as.person("Sarael Alcauter")),
+  journal      = "bioRxiv",
+  year         = "2020",
+  url          = "https://doi.org/10.1101/2020.11.07.373019",
+
+  textVersion  =
+  paste("Zeus Gracia-Tabuenca, Sarael Alcauter (2020).",
+        "NBR: network-based R-statistics for (unbalanced) longitudinal samples.",
+        "bioRxiv",
+        "URL https://doi.org/10.1101/2020.11.07.373019.")
+)

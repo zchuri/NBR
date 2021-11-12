@@ -4,7 +4,8 @@
 \name{voles}
 \alias{voles}
 \title{Prairie voles functional connectivity}
-\format{A data.frame with 96 rows and 123 variables:
+\format{
+A data.frame with 96 rows and 123 variables:
 \describe{
   \item{id}{Subject ID, factor.}
   \item{Sex}{Factor: female (F) or male (M).}
@@ -129,7 +130,8 @@
   \item{VTA.HipV}{Functional connectivity between VTA and HipV regions, numeric}
   \item{Dent.HipV}{Functional connectivity between Dent and HipV regions, numeric}
   \item{HipD.HipV}{Functional connectivity between HipD and HipV regions, numeric}
-}}
+}
+}
 \source{
 \url{https://www.biorxiv.org/content/10.1101/752345v2}
 }

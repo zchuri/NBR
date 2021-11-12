@@ -4,7 +4,8 @@
 \name{frontal2D}
 \alias{frontal2D}
 \title{Frontal lobe functional connectivity in ADHD}
-\format{A data frame with 48 rows and 381 variables:
+\format{
+A data frame with 48 rows and 381 variables:
 \describe{
   \item{Group}{Diagnostic group factor, control or patient.}
   \item{Sex}{Factor, female (F) or male (M).}
@@ -387,7 +388,8 @@
   \item{FMOG.GRD}{Functional connectivity between FMOG and GRD regions, numeric}
   \item{FMOD.GRD}{Functional connectivity between FMOD and GRD regions, numeric}
   \item{GRG.GRD}{Functional connectivity between GRG and GRD regions, numeric}
-}}
+}
+}
 \source{
 \url{https://fcon_1000.projects.nitrc.org/indi/adhd200/}
 }
