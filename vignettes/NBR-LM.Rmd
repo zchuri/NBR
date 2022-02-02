@@ -58,7 +58,7 @@ after <- Sys.time()
 show(after-before)
 ```
 
-Although ten permutations is quite low to obtain a proper null distribution, we can see that they take several seconds to be performed. So we suggest to parallelizing to multiple CPU cores with `cores` argument.
+Although ten permutations is quite low to obtain a proper null distribution, we can see that they take several seconds to be performed. So we suggest to paralleling to multiple CPU cores with `cores` argument.
 
 ```{r multicore group-based NBR, eval = FALSE}
 set.seed(18900217)

@@ -27,7 +27,7 @@
 #' To know more about \emph{padj} methods, check help for the \code{\link{p.adjust}} function. It is
 #' noticeable that this multiple comparison approach can be much more faster than the permutations run by
 #' the Network-Based Statistics framework, however this is a much more conservative approach
-#' (see Zalesky et al. (2010) \url{https://doi.org/10.1016/j.neuroimage.2010.06.041} for more detail).
+#' (see Zalesky et al. (2010) \doi{doi:10.1016/j.neuroimage.2010.06.041} for more detail).
 #'
 #' @return \emph{data.frame} containing the edge labels, observed statistics,
 #'  their corresponding p-value, and their adjusted p-values.

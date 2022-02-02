@@ -30,7 +30,7 @@ dim(voles)
 head(voles)[1:8]
 ```
 
-Here we can obtain the correponding pairwise interaction of the brain network for each edge.
+Here we can obtain the corresponding pairwise interaction of the brain network for each edge.
 
 ```{r upper triangle}
 nnodes <- length(brain_labs)
@@ -71,7 +71,7 @@ after <- Sys.time()
 show(after-before)
 ```
 
-Although five permutations is quite low to obtain a proper null distribution, we can see that they take several seconds to be performed. So we suggest parallelizing to multiple CPU cores with the `cores` argument.
+Although five permutations is quite low to obtain a proper null distribution, we can see that they take several seconds to be performed. So we suggest paralleling to multiple CPU cores with the `cores` argument.
 
 
 ```{r multicore NBR-LME, eval = FALSE}
@@ -101,7 +101,7 @@ nbr_result <- NBR:::voles_nbr
 show(nbr_result$fwe)
 ```
 
-If we observed the Family-Wise Error (FWE) probabilities of the observed components, only the component 1 in the `Session` term is lower than the nominal alpha of p < 0.05. The table shows the probabilites associated with: 1) the number of connected eges, and 2) the sum of the strength of the edges. In this case, we will use the sum of strengths, but you can choose depending on your research question.
+If we observed the Family-Wise Error (FWE) probabilities of the observed components, only the component 1 in the `Session` term is lower than the nominal alpha of p < 0.05. The table shows the probabilities associated with: 1) the number of connected edges, and 2) the sum of the strength of the edges. In this case, we will use the sum of strengths, but you can choose depending on your research question.
 
 Let's display the FWE-corrected component.
 
