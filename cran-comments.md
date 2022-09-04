@@ -5,5 +5,4 @@ Tested environments: macOS builder (R version 4.1.1 Patched), Ubuntu 18.04.1 LTS
 
 ## Modifications
 
-Citation added, hypothesis alternative testing added to main functions, and a new function for analysis double-checking is included.
-
+Bug fixed in the generation of permuted indices.

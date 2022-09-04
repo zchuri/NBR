@@ -240,7 +240,10 @@ nbr_lme_aov <- function(net,
   if(length(grep("/",rdmsplit[2]))>0) stop("STOP: this function does not allow nested random structures... yet.")
   # Set grouping structure index
   id_idx <- grep(rdmsplit[2],names(idata))
-
+  # Logical variable for single-session cases
+  one_id <- any(names(table(table(idata[,id_idx])))=="1")
+  if(one_id) one_pos <- match(names(which(table(idata[,id_idx])==1)),idata[,id_idx])
+  
   # Apply permutations
   if(verbose) cat("Permutation progress: ")
   for(pp in 1:nperm){
@@ -254,8 +257,10 @@ nbr_lme_aov <- function(net,
     # Permutate inference dataset (within block)
     perm_idx <- as.vector(sapply(as.data.frame(1:idata_dim[1]),
                                  function(x) ave(x, idata[,id_idx], FUN = sample)))
-    pdata <- idata
+    # Fix indices for one time point cases (thanks Will Palmer for finding this bug!!!)
+    if(one_id) perm_idx[one_pos] <- one_pos
     # Permute only original idata columns
+    pdata <- idata
     pdata[,1:idata_dim[2]] <- idata[perm_idx,1:idata_dim[2]]
 
     # Set (or not) parallelization
